@@ -5,10 +5,12 @@ import (
 )
 
 type RegisterRequest struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}	
+	Name      string `json:"name"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	ClassLink string `json:"classLink"`
+	GroupName string `json:"groupname"`
+}
 
 type ResponseData struct {
 	ID        int       `json:"id"`
