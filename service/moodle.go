@@ -54,7 +54,10 @@ func CreateMoodleUser(user model.MoodleUser) (int, error) {
 	form.Set("users[0][firstname]", user.Firstname)
 	form.Set("users[0][lastname]", user.Lastname)
 	form.Set("users[0][email]", user.Email)
+	form.Set("users[0][city]", user.City)
+	form.Set("users[0][department]", user.Department)
 
+	// Kirim request
 	resp, err := http.PostForm(constant.MoodleURL, form)
 	if err != nil {
 		return 0, err
@@ -65,10 +68,6 @@ func CreateMoodleUser(user model.MoodleUser) (int, error) {
 	if err != nil {
 		return 0, fmt.Errorf("gagal membaca response body: %v", err)
 	}
-
-	fmt.Println("HTTP Status:", resp.StatusCode)
-	fmt.Println("Content-Type:", resp.Header.Get("Content-Type"))
-	fmt.Println("Response Body:", string(body))
 
 	if resp.StatusCode != http.StatusOK {
 		return 0, fmt.Errorf("server returned status %d: %s", resp.StatusCode, string(body))
@@ -101,7 +100,6 @@ func CreateMoodleUser(user model.MoodleUser) (int, error) {
 	}
 
 	return int(userID), nil
-
 }
 
 // EnrolUser mendaftarkan user ke course di Moodle

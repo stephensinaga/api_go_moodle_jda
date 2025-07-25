@@ -24,7 +24,6 @@ func main() {
 			return
 		}
 
-		// Parsing classLink untuk dapatkan courseID
 		parsedURL, err := url.Parse(req.ClassLink)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid classLink URL"})
@@ -57,6 +56,8 @@ func main() {
 				Firstname: firstname,
 				Lastname:  lastname,
 				Email:     req.Email,
+				City:      req.City,
+				Department: req.GroupName,
 			}
 
 			userID, err = service.CreateMoodleUser(user)
