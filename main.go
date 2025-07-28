@@ -6,15 +6,21 @@ import (
 	"net/url"
 	"strconv"
 	"time"
+	"bytes"
+	"encoding/csv"
 
 	"moodleinix/constant"
 	"moodleinix/model"
 	"moodleinix/service"
+	"moodleinix/database"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	database.Init()
+	defer database.Close()
+	
 	r := gin.Default()
 
 	r.POST("/api/register/JDA", service.BasicAuthMiddleware(constant.BasicAuthUserName, constant.BasicAuthUPassword), func(c *gin.Context) {
@@ -111,6 +117,99 @@ func main() {
 		}
 
 		c.JSON(http.StatusOK, response)
+	})
+
+// Endpoint untuk mengakses data user course quiz dalam format JSON
+	r.GET("/api/user-course-quiz-data", func(c *gin.Context) {
+		data, err := service.GetUserCourseQuizData()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, data)
+	})
+
+	// Endpoint baru untuk mengunduh data user course quiz dalam format CSV
+	r.GET("/api/user-course-quiz-data/csv", func(c *gin.Context) {
+		data, err := service.GetUserCourseQuizData()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Buat buffer untuk menulis CSV
+		b := &bytes.Buffer{}
+		writer := csv.NewWriter(b)
+
+		// Tulis header CSV sesuai field struct Anda
+		header := []string{
+			"UserID", "FullName", "Email", "City", "Department", "CourseID", "CourseName",
+			"QuizDNSDHCP", "QuizRouting", "QuizIPAddress", "QuizOSIModel", "QuizTopologiJaringan",
+			"QuizAncamanDuniaDigital", "QuizHukumAturanDuniaDigital", "QuizTujuanMetodeEthicalHacking",
+			"QuizDasarEthicalHackingTipeHacker", "QuizUUPDP", "QuizUUITE", "QuizCyberWarfare",
+			"QuizKerentananCybersecurity", "QuizSumberAncamanCybersecurity", "QuizTipeAncamanCybersecurity",
+			"TestJaringanKomputerDasar", "TestKonsepEthicalHacking", "TestAkhir", "Durasi Penyelesaian (jam)",
+		}
+		if err := writer.Write(header); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to write CSV header"})
+			return
+		}
+
+		// Fungsi untuk konversi *float64 menjadi string, menampilkan kosong jika nil
+		floatToString := func(f *float64) string {
+			if f == nil {
+				return ""
+			}
+			return strconv.FormatFloat(*f, 'f', 2, 64)
+		}
+
+		// Tulis baris data CSV
+		for _, row := range data {
+			record := []string{
+				strconv.Itoa(row.UserID),
+				row.Fullname,
+				row.Email,
+				row.City,
+				row.Department,
+				strconv.Itoa(row.CourseID),
+				row.CourseName,
+				floatToString(row.QuizDNSDHCP),
+				floatToString(row.QuizRouting),
+				floatToString(row.QuizIPAddress),
+				floatToString(row.QuizOSIModel),
+				floatToString(row.QuizTopologiJaringan),
+				floatToString(row.QuizAncamanDuniaDigital),
+				floatToString(row.QuizHukumAturanDuniaDigital),
+				floatToString(row.QuizTujuanMetodeEthicalHacking),
+				floatToString(row.QuizDasarEthicalHackingTipeHacker),
+				floatToString(row.QuizUUPDP),
+				floatToString(row.QuizUUITE),
+				floatToString(row.QuizCyberWarfare),
+				floatToString(row.QuizKerentananCybersecurity),
+				floatToString(row.QuizSumberAncamanCybersecurity),
+				floatToString(row.QuizTipeAncamanCybersecurity),
+				floatToString(row.TestJaringanKomputerDasar),
+				floatToString(row.TestKonsepEthicalHacking),
+				floatToString(row.TestAkhir),
+				floatToString(row.CourseCompletionDurationHours),
+			}
+
+			if err := writer.Write(record); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to write CSV record"})
+				return
+			}
+		}
+
+		writer.Flush()
+		if err := writer.Error(); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "CSV write error"})
+			return
+		}
+
+		// Set header response supaya browser menganggap ini file download CSV
+		c.Header("Content-Description", "File Transfer")
+		c.Header("Content-Disposition", "attachment; filename=report_user_LMS_inixindo.csv")
+		c.Data(http.StatusOK, "text/csv", b.Bytes())
 	})
 
 	log.Fatal(r.Run(constant.HOST))
