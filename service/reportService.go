@@ -33,6 +33,8 @@ func GetUserCourseQuizData() ([]model.UserCourseQuizData, error) {
 	  MAX(CASE WHEN q.name = 'Quiz Sumber Ancaman Cybersecurity' THEN qg.grade END) AS Quiz_Sumber_Ancaman_Cybersecurity,
 	  MAX(CASE WHEN q.name = 'Quiz Tipe dan Ancaman Cybersecurity' THEN qg.grade END) AS Quiz_Tipe_dan_Ancaman_Cybersecurity,
 	  MAX(CASE WHEN q.name = 'Test Jaringan Komputer Dasar' THEN qg.grade END) AS Test_Jaringan_Komputer_Dasar,
+	  MAX(CASE WHEN q.name = 'Test Ancaman Dunia Digital' THEN qg.grade END) AS Test_Ancaman_Dunia_Digital,
+	  MAX(CASE WHEN q.name = 'Test Hukum/Aturan dalam Dunia Digital' THEN qg.grade END) AS Test_Hukum_Aturan_dalam_Dunia_Digital,
 	  MAX(CASE WHEN q.name = 'Test Konsep Ethical Hacking' THEN qg.grade END) AS Test_Konsep_Ethical_Hacking,
 	  MAX(CASE WHEN q.name = 'Test Akhir' THEN qg.grade END) AS Test_Akhir,
 
@@ -85,6 +87,8 @@ func GetUserCourseQuizData() ([]model.UserCourseQuizData, error) {
 			&ucqd.QuizSumberAncamanCybersecurity,
 			&ucqd.QuizTipeAncamanCybersecurity,
 			&ucqd.TestJaringanKomputerDasar,
+			&ucqd.TestAncamanDuniaDigital,
+			&ucqd.TestHukumAturandalamDuniaDigital,
 			&ucqd.TestKonsepEthicalHacking,
 			&ucqd.TestAkhir,
 			&ucqd.CourseCompletionDurationHours,

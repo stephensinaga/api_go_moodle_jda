@@ -21,8 +21,8 @@ func getEnv(key string, defaultVal string) string {
 }
 
 func Init() {
-	user := getEnv("DB_USER", "root")
-	password := getEnv("DB_PASSWORD", "")
+	user := getEnv("DB_USER", "mdlusr")
+	password := getEnv("DB_PASSWORD", "dbpassmdl")
 	host := getEnv("DB_HOST", "127.0.0.1")
 	port := getEnv("DB_PORT", "3306")
 	dbname := getEnv("DB_NAME", "moodle")

@@ -24,6 +24,8 @@ type UserCourseQuizData struct {
 	QuizSumberAncamanCybersecurity *float64
 	QuizTipeAncamanCybersecurity *float64
 	TestJaringanKomputerDasar *float64
+	TestAncamanDuniaDigital *float64
+	TestHukumAturandalamDuniaDigital *float64
 	TestKonsepEthicalHacking *float64
 	TestAkhir                *float64
 

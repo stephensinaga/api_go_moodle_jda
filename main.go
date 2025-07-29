@@ -147,7 +147,7 @@ func main() {
 			"QuizAncamanDuniaDigital", "QuizHukumAturanDuniaDigital", "QuizTujuanMetodeEthicalHacking",
 			"QuizDasarEthicalHackingTipeHacker", "QuizUUPDP", "QuizUUITE", "QuizCyberWarfare",
 			"QuizKerentananCybersecurity", "QuizSumberAncamanCybersecurity", "QuizTipeAncamanCybersecurity",
-			"TestJaringanKomputerDasar", "TestKonsepEthicalHacking", "TestAkhir", "Durasi Penyelesaian (jam)",
+			"TestJaringanKomputerDasar", "TestAncamanDuniaDigital", "TestHukumAturandalamDuniaDigital","TestKonsepEthicalHacking", "TestAkhir", "Durasi Penyelesaian (jam)",
 			"Tanggal Selesai",
 		}
 		if err := writer.Write(header); err != nil {
@@ -196,6 +196,8 @@ func main() {
 				floatToString(row.QuizSumberAncamanCybersecurity),
 				floatToString(row.QuizTipeAncamanCybersecurity),
 				floatToString(row.TestJaringanKomputerDasar),
+				floatToString(row.TestAncamanDuniaDigital),
+				floatToString(row.TestHukumAturandalamDuniaDigital),	
 				floatToString(row.TestKonsepEthicalHacking),
 				floatToString(row.TestAkhir),
 				floatToString(row.CourseCompletionDurationHours),
