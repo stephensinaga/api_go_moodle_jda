@@ -28,4 +28,5 @@ type UserCourseQuizData struct {
 	TestAkhir                *float64
 
 	CourseCompletionDurationHours *float64
+	EndDate *float64
 }

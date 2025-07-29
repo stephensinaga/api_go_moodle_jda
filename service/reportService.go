@@ -3,6 +3,7 @@ package service
 import (
 	"moodleinix/database"
 	"moodleinix/model"
+
 )
 
 func GetUserCourseQuizData() ([]model.UserCourseQuizData, error) {
@@ -35,7 +36,8 @@ func GetUserCourseQuizData() ([]model.UserCourseQuizData, error) {
 	  MAX(CASE WHEN q.name = 'Test Konsep Ethical Hacking' THEN qg.grade END) AS Test_Konsep_Ethical_Hacking,
 	  MAX(CASE WHEN q.name = 'Test Akhir' THEN qg.grade END) AS Test_Akhir,
 
-	  ROUND((cc.timecompleted - cc.timestarted) / 3600, 2) AS Course_Completion_Duration_Hours
+	  ROUND((cc.timecompleted - cc.timestarted) / 3600, 2) AS Course_Completion_Duration_Hours,
+	  cc.timecompleted AS End_Date
 
 	FROM mdl_user u
 	JOIN mdl_user_enrolments ue ON ue.userid = u.id
@@ -86,6 +88,7 @@ func GetUserCourseQuizData() ([]model.UserCourseQuizData, error) {
 			&ucqd.TestKonsepEthicalHacking,
 			&ucqd.TestAkhir,
 			&ucqd.CourseCompletionDurationHours,
+			&ucqd.EndDate,
 		)
 		if err != nil {
 			return nil, err

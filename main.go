@@ -13,6 +13,7 @@ import (
 	"moodleinix/model"
 	"moodleinix/service"
 	"moodleinix/database"
+	"moodleinix/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -119,7 +120,7 @@ func main() {
 		c.JSON(http.StatusOK, response)
 	})
 
-// Endpoint untuk mengakses data user course quiz dalam format JSON
+	// Endpoint untuk mengakses data user course quiz dalam format JSON
 	r.GET("/api/user-course-quiz-data", func(c *gin.Context) {
 		data, err := service.GetUserCourseQuizData()
 		if err != nil {
@@ -130,18 +131,16 @@ func main() {
 	})
 
 	// Endpoint baru untuk mengunduh data user course quiz dalam format CSV
-	r.GET("/api/user-course-quiz-data/csv", func(c *gin.Context) {
+	r.GET("/api/user-course-quiz-data/csv", middleware.TokenAuthMiddleware, func(c *gin.Context) {
 		data, err := service.GetUserCourseQuizData()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		// Buat buffer untuk menulis CSV
 		b := &bytes.Buffer{}
 		writer := csv.NewWriter(b)
 
-		// Tulis header CSV sesuai field struct Anda
 		header := []string{
 			"UserID", "FullName", "Email", "City", "Department", "CourseID", "CourseName",
 			"QuizDNSDHCP", "QuizRouting", "QuizIPAddress", "QuizOSIModel", "QuizTopologiJaringan",
@@ -149,13 +148,13 @@ func main() {
 			"QuizDasarEthicalHackingTipeHacker", "QuizUUPDP", "QuizUUITE", "QuizCyberWarfare",
 			"QuizKerentananCybersecurity", "QuizSumberAncamanCybersecurity", "QuizTipeAncamanCybersecurity",
 			"TestJaringanKomputerDasar", "TestKonsepEthicalHacking", "TestAkhir", "Durasi Penyelesaian (jam)",
+			"Tanggal Selesai",
 		}
 		if err := writer.Write(header); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to write CSV header"})
 			return
 		}
 
-		// Fungsi untuk konversi *float64 menjadi string, menampilkan kosong jika nil
 		floatToString := func(f *float64) string {
 			if f == nil {
 				return ""
@@ -163,7 +162,15 @@ func main() {
 			return strconv.FormatFloat(*f, 'f', 2, 64)
 		}
 
-		// Tulis baris data CSV
+		timestampToString := func(ts *float64) string {
+			if ts == nil || *ts == 0 {
+				return ""
+			}
+			sec := int64(*ts)
+			t := time.Unix(sec, 0)
+			return t.Format("2006-01-02 15:04:05")
+		}
+
 		for _, row := range data {
 			record := []string{
 				strconv.Itoa(row.UserID),
@@ -192,6 +199,7 @@ func main() {
 				floatToString(row.TestKonsepEthicalHacking),
 				floatToString(row.TestAkhir),
 				floatToString(row.CourseCompletionDurationHours),
+				timestampToString(row.EndDate), // Panggil konversi untuk EndDate di sini
 			}
 
 			if err := writer.Write(record); err != nil {
@@ -206,11 +214,17 @@ func main() {
 			return
 		}
 
-		// Set header response supaya browser menganggap ini file download CSV
 		c.Header("Content-Description", "File Transfer")
-		c.Header("Content-Disposition", "attachment; filename=report_user_LMS_inixindo.csv")
+		c.Header("Content-Disposition", "attachment; filename=report_user_LMS_inixindo.csv.csv")
 		c.Data(http.StatusOK, "text/csv", b.Bytes())
 	})
 
 	log.Fatal(r.Run(constant.HOST))
+
+	// Production
+	// 	log.Fatal(r.RunTLS(
+	// 	constant.PORT,
+	// 	constant.EncryptFullChain,
+	// 	constant.EncryptPriveKey,
+	// ))
 }

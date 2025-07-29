@@ -25,7 +25,7 @@ func Init() {
 	password := getEnv("DB_PASSWORD", "")
 	host := getEnv("DB_HOST", "127.0.0.1")
 	port := getEnv("DB_PORT", "3306")
-	dbname := getEnv("DB_NAME", "mdl")
+	dbname := getEnv("DB_NAME", "moodle")
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", user, password, host, port, dbname)
 

@@ -9,8 +9,14 @@ const (
 	WSFunctionGetUsers       = "core_user_get_users"
 	WSFunctionGetNameGroup   = "core_group_get_course_groups"
 	WSFunctionAddUsertoGroup = "core_group_add_group_members"
-	HOST                     = "192.168.95.114:4500" // ini sesuai dengan host yang ingin anda buat
+	HOST                     = "192.168.95.114:8080" // ini sesuai dengan host yang ingin anda buat
 	RoleID                   = 5                // tidak boleh diganti
 	BasicAuthUserName        = "inixapijida"
 	BasicAuthUPassword       = "inixjayasentosa"
+	API_TOKEN 				 = "c84f3e2b-5a91-44d3-8f52-1b7d2f946eca"
+
+	// Production
+	PORT                     = ":8443"
+	EncryptFullChain         = "/etc/letsencrypt/live/jida.inixindobdg.co.id/fullchain.pem"
+	EncryptPriveKey          = "/etc/letsencrypt/live/jida.inixindobdg.co.id/privkey.pem"
 )
